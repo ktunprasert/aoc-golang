@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/profclems/go-dotenv"
 )
@@ -18,8 +20,16 @@ func downloadInput(year, day string) error {
 	if err != nil {
 		return err
 	}
-
-	req.Header.Set("Cookie", cookie)
+	sessionCookie := http.Cookie{
+		Name:     "session",
+		Value:    cookie,
+		Path:     "/",
+		Domain:   ".adventofcode.com",
+		Expires:  time.Now().Add(time.Duration(24 * 365 * time.Hour)),
+		Secure:   true,
+		HttpOnly: true,
+	}
+	req.AddCookie(&sessionCookie)
 
 	client := http.Client{}
 	res, err := client.Do(req)
@@ -28,11 +38,30 @@ func downloadInput(year, day string) error {
 	}
 	defer res.Body.Close()
 
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("Failed to download input: %s", res.Status)
+	}
+
 	file, err := os.Create(fmt.Sprintf("input/%s-%s.txt", year, day))
 	if err != nil {
 		return err
 	}
+
 	defer file.Close()
+
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Truncated input:\n%s...\n", string(bytes[:100]))
+
+	written, err := file.Write(bytes)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Wrote %d bytes to input/%s-%s.txt\n", written, year, day)
 
 	return nil
 }
