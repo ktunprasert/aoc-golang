@@ -1,7 +1,6 @@
 package year_2024
 
 import (
-	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -17,7 +16,11 @@ func (d Day1) Part1(input string) (int, error) {
 
 	var sum int
 	for i := 0; i < len(l); i++ {
-		sum += int(math.Abs(float64(l[i] - r[i])))
+		diff := l[i] - r[i]
+		if diff < 0 {
+			diff = -diff
+		}
+		sum += diff
 	}
 
 	return sum, nil
