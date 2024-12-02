@@ -1,12 +1,50 @@
 package year_2024
 
 import (
+	"fmt"
 	"slices"
 	"strconv"
 	"strings"
 )
 
 type Day1 struct{}
+
+func (d Day1) Solve(input string) error {
+	l, r, err := d.Parse(input)
+	if err != nil {
+		return err
+	}
+
+	slices.Sort(l)
+	slices.Sort(r)
+
+	var ans1 int
+	for i := 0; i < len(l); i++ {
+		diff := l[i] - r[i]
+		if diff < 0 {
+			diff = -diff
+		}
+		ans1 += diff
+	}
+
+	fmt.Printf("Part 1: %d\n", ans1)
+
+	counter := make(map[int]int)
+	for _, v := range r {
+		counter[v]++
+	}
+
+	var ans2 int
+	for _, v := range l {
+		if count, ok := counter[v]; ok {
+			ans2 += v * count
+		}
+	}
+
+	fmt.Printf("Part 2: %d\n", ans2)
+
+	return nil
+}
 
 func (d Day1) Part1(input string) (int, error) {
 	l, r, _ := d.Parse(input)
