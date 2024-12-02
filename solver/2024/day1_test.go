@@ -17,7 +17,14 @@ var example = `
 
 func TestDay1_P1_Example(t *testing.T) {
 	solver := Day1{}
-	ans, err := solver.part1(example)
+	ans, err := solver.Part1(example)
 	require.NoError(t, err)
 	require.Equal(t, 11, ans)
+}
+
+func TestDay1_P2_Example(t *testing.T) {
+	solver := Day1{}
+	ans, err := solver.Part2(example)
+	require.NoError(t, err)
+	require.Equal(t, 31, ans)
 }

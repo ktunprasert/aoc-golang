@@ -9,8 +9,8 @@ import (
 
 type Day1 struct{}
 
-func (d Day1) part1(input string) (int, error) {
-	l, r, _ := d.parse(input)
+func (d Day1) Part1(input string) (int, error) {
+	l, r, _ := d.Parse(input)
 
 	slices.Sort(l)
 	slices.Sort(r)
@@ -23,7 +23,25 @@ func (d Day1) part1(input string) (int, error) {
 	return sum, nil
 }
 
-func (d Day1) parse(input string) ([]int, []int, error) {
+func (d Day1) Part2(input string) (int, error) {
+	l, r, _ := d.Parse(input)
+
+	counter := make(map[int]int)
+	for _, v := range r {
+		counter[v]++
+	}
+
+	var sum int
+	for _, v := range l {
+		if count, ok := counter[v]; ok {
+			sum += v * count
+		}
+	}
+
+	return sum, nil
+}
+
+func (d Day1) Parse(input string) ([]int, []int, error) {
 	lines := strings.Split(strings.TrimSpace(input), "\n")
 	left := make([]int, len(lines))
 	right := make([]int, len(lines))
